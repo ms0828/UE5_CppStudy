@@ -28,7 +28,12 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TObjectPtr<UStaticMeshComponent> Box;
+	TObjectPtr<UStaticMeshComponent> Body;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> Wing;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> Head;
 	int32 Hp = 10;
 };
