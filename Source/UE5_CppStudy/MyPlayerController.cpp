@@ -5,6 +5,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "System/MyAssetManager.h"
+#include "Data/MyInputData.h"
+#include "MyGameplayTags.h"
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 
@@ -13,9 +16,12 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (auto* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if (const UMyInputData* InputData = UMyAssetManager::GetAssetByName<UMyInputData>("InputData"))
 	{
-		Subsystem->AddMappingContext(InputMappingContext, 0);
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputData->InputMappingContext, 0);
+		}
 	}
 
 }
@@ -24,18 +30,21 @@ void AMyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	if (auto* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	if (const UMyInputData* InputData = UMyAssetManager::GetAssetByName<UMyInputData>("InputData"))
 	{
-		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Test);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
-		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
+		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+
+		auto Action1 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Move);
+		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
+
+		auto Action2 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Turn);
+		EnhancedInputComponent->BindAction(Action2, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
+
+		//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
+		//EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
 	}
 }
 
-void AMyPlayerController::Input_Test(const FInputActionValue& InputValue)
-{
-	GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Cyan, TEXT("Test"));
-}
 
 void AMyPlayerController::Input_Move(const FInputActionValue& InputValue)
 {

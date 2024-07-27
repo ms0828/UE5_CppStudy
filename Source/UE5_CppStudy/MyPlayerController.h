@@ -16,7 +16,7 @@ class UE5_CPPSTUDY_API AMyPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	AMyPlayerController(const FObjectInitializer& Object);
+	AMyPlayerController(const FObjectInitializer& ObjectInitializer);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -24,21 +24,10 @@ protected:
 	
 
 private:
-	void Input_Test(const FInputActionValue& InputValue);
 	void Input_Move(const FInputActionValue& InputValue);
 	void Input_Turn(const FInputActionValue& InputValue);
 
 protected:
-	UPROPERTY(EditAnywhere, Category=Input)
-	TObjectPtr<class UInputMappingContext> InputMappingContext;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<class UInputAction> TestAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<class UInputAction> MoveAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<class UInputAction> TurnAction;
+	
 
 };
