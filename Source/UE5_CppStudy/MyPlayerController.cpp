@@ -8,6 +8,7 @@
 #include "System/MyAssetManager.h"
 #include "Data/MyInputData.h"
 #include "MyGameplayTags.h"
+#include "Character/MyCharacter.h"
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 
@@ -40,6 +41,12 @@ void AMyPlayerController::SetupInputComponent()
 		auto Action2 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Turn);
 		EnhancedInputComponent->BindAction(Action2, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
 
+		auto Action3 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Jump);
+		EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Triggered, this, &ThisClass::Input_Jump);
+
+		auto Action4 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Attack);
+		EnhancedInputComponent->BindAction(Action4, ETriggerEvent::Triggered, this, &ThisClass::Input_Attack);
+
 		//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 		//EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
 	}
@@ -71,4 +78,17 @@ void AMyPlayerController::Input_Turn(const FInputActionValue& InputValue)
 {
 	float Val = InputValue.Get<float>();
 	AddYawInput(Val);
+}
+
+void AMyPlayerController::Input_Jump(const FInputActionValue& InputValue)
+{
+	if (AMyCharacter* Char = Cast<AMyCharacter>(GetPawn()))
+	{
+		Char->Jump();
+	}
+}
+
+void AMyPlayerController::Input_Attack(const FInputActionValue& InputValue)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATTACK"));
 }

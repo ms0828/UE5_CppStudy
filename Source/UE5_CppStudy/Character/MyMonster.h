@@ -3,26 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
-#include "MyCharacter.generated.h"
+#include "Character/MyCharacter.h"
+#include "MyMonster.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class UE5_CPPSTUDY_API AMyCharacter : public ACharacter
+class UE5_CPPSTUDY_API AMyMonster : public AMyCharacter
 {
 	GENERATED_BODY()
-
+	
 public:
 	// Sets default values for this character's properties
-	AMyCharacter();
+	AMyMonster();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
