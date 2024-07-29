@@ -9,9 +9,16 @@
 #include "Data/MyInputData.h"
 #include "MyGameplayTags.h"
 #include "Character/MyCharacter.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
+	bShowMouseCursor = true;
+	DefaultMouseCursor = EMouseCursor::Default;
+	CachedDestination = FVector::ZeroVector;
+	FollowTime = 0.f;
 }
 
 void AMyPlayerController::BeginPlay()
@@ -35,63 +42,48 @@ void AMyPlayerController::SetupInputComponent()
 	{
 		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
-		auto Action1 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Move);
-		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
+		auto Action1 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_SetDestination);
 
-		auto Action2 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Turn);
-		EnhancedInputComponent->BindAction(Action2, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
+		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Started, this, &ThisClass::OnInputStarted);
+		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Triggered, this, &ThisClass::OnSetDestinationTriggered);
+		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Completed, this, &ThisClass::OnSetDestinationReleased);
+		EnhancedInputComponent->BindAction(Action1, ETriggerEvent::Canceled, this, &ThisClass::OnSetDestinationReleased);
 
-		auto Action3 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Jump);
-		EnhancedInputComponent->BindAction(Action3, ETriggerEvent::Triggered, this, &ThisClass::Input_Jump);
-
-		auto Action4 = InputData->FindInputActionByTag(MyGameplayTags::Input_Action_Attack);
-		EnhancedInputComponent->BindAction(Action4, ETriggerEvent::Triggered, this, &ThisClass::Input_Attack);
-
-		//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
-		//EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::Input_Turn);
 	}
 }
 
-
-void AMyPlayerController::Input_Move(const FInputActionValue& InputValue)
+void AMyPlayerController::OnInputStarted()
 {
-	FVector2D MovementVector = InputValue.Get<FVector2D>();
-	if (MovementVector.X != 0)
+	StopMovement();
+}
+
+void AMyPlayerController::OnSetDestinationTriggered()
+{
+	FollowTime += GetWorld()->GetDeltaSeconds();
+
+	FHitResult Hit;
+	bool bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, OUT Hit);
+
+	if (bHitSuccessful)
 	{
-		//FVector Direction = FVector::ForwardVector * MovementVector.X;
-		//GetPawn()->AddActorWorldOffset(Direction * 50.f);
-		FRotator Rotator = GetControlRotation();
-		FVector Direction = UKismetMathLibrary::GetForwardVector(FRotator(0, Rotator.Yaw, 0));
-		GetPawn()->AddMovementInput(Direction, MovementVector.X);
+		CachedDestination = Hit.Location;
 	}
-	if (MovementVector.Y != 0)
+
+	APawn* ControlledPawn = GetPawn();
+	if (ControlledPawn != nullptr)
 	{
-		//FVector Direction = FVector::RightVector * MovementVector.Y;
-		//GetPawn()->AddActorWorldOffset(Direction * 50.f);
-		FRotator Rotator = GetControlRotation();
-		FVector Direction = UKismetMathLibrary::GetRightVector(FRotator(0, Rotator.Yaw, 0));
-		GetPawn()->AddMovementInput(Direction, MovementVector.Y);
+		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
 	}
 }
 
-void AMyPlayerController::Input_Turn(const FInputActionValue& InputValue)
+void AMyPlayerController::OnSetDestinationReleased()
 {
-	float Val = InputValue.Get<float>();
-	AddYawInput(Val);
-}
-
-void AMyPlayerController::Input_Jump(const FInputActionValue& InputValue)
-{
-	if (AMyCharacter* Char = Cast<AMyCharacter>(GetPawn()))
+	if (FollowTime <= ShortPressThreshold)
 	{
-		Char->Jump();
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 	}
-}
 
-void AMyPlayerController::Input_Attack(const FInputActionValue& InputValue)
-{
-	if (AttackMontage)
-	{
-		Cast<AMyCharacter>(GetPawn())->PlayAnimMontage(AttackMontage);
-	}
+	FollowTime = 0.f;
 }

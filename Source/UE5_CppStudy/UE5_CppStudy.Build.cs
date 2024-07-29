@@ -14,7 +14,18 @@ public class UE5_CppStudy : ModuleRules
             "UE5_CppStudy",
         });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags" });
+        PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"GameplayTags",
+			"NavigationSystem",
+			"AIModule",
+			"Niagara",
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
