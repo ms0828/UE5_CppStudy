@@ -90,5 +90,8 @@ void AMyPlayerController::Input_Jump(const FInputActionValue& InputValue)
 
 void AMyPlayerController::Input_Attack(const FInputActionValue& InputValue)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATTACK"));
+	if (AttackMontage)
+	{
+		Cast<AMyCharacter>(GetPawn())->PlayAnimMontage(AttackMontage);
+	}
 }
