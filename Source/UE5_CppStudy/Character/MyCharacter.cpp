@@ -2,7 +2,7 @@
 
 
 #include "MyCharacter.h"
-
+#include "MyDefine.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -23,6 +23,41 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AMyCharacter::HandleGameplayEvent(FGameplayTag EventTag)
+{
+
+}
+
+void AMyCharacter::Highlight()
+{
+	bHighlighted = true;
+}
+
+void AMyCharacter::UnHighlight()
+{
+	bHighlighted = false;
+}
+
+void AMyCharacter::OnDamage(int32 Damage, TObjectPtr<AMyCharacter> Attacker)
+{
+	Hp = FMath::Clamp(Hp - Damage, 0, MaxHp);
+	if (Hp == 0)
+	{
+		OnDead(Attacker);
+	}
+	
+	D(FString::Printf(TEXT("%d"), Hp));
+}
+
+void AMyCharacter::OnDead(TObjectPtr<AMyCharacter> Attacker)
+{
+	if (CreatureState == ECreatureState::Dead)
+	{
+		return;
+	}
+	CreatureState = ECreatureState::Dead;
 }
 
 

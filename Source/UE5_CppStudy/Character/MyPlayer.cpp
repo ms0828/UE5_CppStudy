@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MyPlayerController.h"
 
 AMyPlayer::AMyPlayer()
 {
@@ -26,14 +27,32 @@ AMyPlayer::AMyPlayer()
 	Camera->bUsePawnControlRotation = false;
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 }
 
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AMyPlayer::HandleGameplayEvent(FGameplayTag EventTag)
+{
+	AMyPlayerController* PC = Cast<AMyPlayerController>(GetController());
+	if (PC)
+	{
+		PC->HandleGameplayEvent(EventTag);
+	}
+}
+
+void AMyPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Log, TEXT("TETS!"));
 }

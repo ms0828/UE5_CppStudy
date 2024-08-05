@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "MyDefine.h"
+#include "GameplayTagContainer.h"
 #include "MyPlayerController.generated.h"
 
 struct FInputActionValue;
@@ -22,12 +24,20 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	
+	virtual void PlayerTick(float DeltaTime) override;
 
+public:
+	virtual void HandleGameplayEvent(FGameplayTag EventTag);
+private:
+	void TickCursorTrace();
+	void ChaseTargetAndAttack();
 private:
 	void OnInputStarted();
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased();
+	ECreatureState GetCreatureState();
+	void SetCreatureState(ECreatureState InState);
+
 
 public:
 
@@ -40,4 +50,18 @@ public:
 private:
 	FVector CachedDestination;
 	float FollowTime;
+	bool bMousePressed = false;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<class AMyCharacter> TargetActor;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<class AMyCharacter> HighlightActor;
+	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<class AMyPlayer> MyPlayer;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UAnimMontage> AttackMontage;
 };
