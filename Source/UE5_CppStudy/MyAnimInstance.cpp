@@ -14,7 +14,7 @@ void UMyAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	Character = Cast<AMyPlayer>(TryGetPawnOwner());
+	Character = Cast<AMyCharacter>(TryGetPawnOwner());
 
 	if (Character)
 		MovementComponent = Character->GetCharacterMovement();

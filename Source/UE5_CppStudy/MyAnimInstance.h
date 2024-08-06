@@ -22,7 +22,7 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<class AMyPlayer> Character;
+	TObjectPtr<class AMyCharacter> Character;
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<class UCharacterMovementComponent> MovementComponent;
