@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Character/MyCharacter.h"
 #include "MyAnimNotify_SendGameplayEvent.h"
+#include "Character/MyCharacter.h"
+
 
 UMyAnimNotify_SendGameplayEvent::UMyAnimNotify_SendGameplayEvent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

@@ -25,6 +25,7 @@ public class UE5_CppStudy : ModuleRules
 			"NavigationSystem",
 			"AIModule",
 			"Niagara",
+			"UMG",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
