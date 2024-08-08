@@ -14,4 +14,6 @@ class UE5_CPPSTUDY_API AMyGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 };
