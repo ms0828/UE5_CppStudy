@@ -22,6 +22,8 @@ public class UE5_CppStudy : ModuleRules
 			"InputCore", 
 			"EnhancedInput", 
 			"GameplayTags",
+			"GameplayTasks",
+			"GameplayAbilities",
 			"NavigationSystem",
 			"AIModule",
 			"Niagara",

@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MyPlayerController.h"
+#include "MyPlayerState.h"
+#include "AbilitySystem/MyAbilitySystemComponent.h"
 
 AMyPlayer::AMyPlayer()
 {
@@ -36,6 +38,23 @@ void AMyPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
+
+}
+
+void AMyPlayer::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	InitAbilitySystem();
+}
+
+void AMyPlayer::InitAbilitySystem()
+{
+	Super::InitAbilitySystem();
+	if (AMyPlayerState* PS = GetPlayerState<AMyPlayerState>())
+	{
+		AbilitySystemComponent = Cast<UMyAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
+	}
 }
 
 void AMyPlayer::Tick(float DeltaTime)

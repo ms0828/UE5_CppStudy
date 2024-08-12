@@ -9,10 +9,10 @@
 #include "Interface/MyHighlightInterface.h"
 #include "MyDefine.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystemInterface.h"
 #include "MyCharacter.generated.h"
-
 UCLASS()
-class UE5_CPPSTUDY_API AMyCharacter : public ACharacter, public IMyHighlightInterface
+class UE5_CPPSTUDY_API AMyCharacter : public ACharacter, public IMyHighlightInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -39,6 +39,9 @@ public:
 
 	void RefreshHpBarRatio();
 	
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void InitAbilitySystem();
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool bHighlighted = false;
@@ -59,4 +62,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> HpBarComponent;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UMyAbilitySystemComponent> AbilitySystemComponent;
+
 };

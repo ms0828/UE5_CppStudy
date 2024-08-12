@@ -5,6 +5,7 @@
 #include "MyDefine.h"
 #include "Components/WidgetComponent.h"
 #include "UI/MyHpBarWidget.h"
+#include "AbilitySystem/MyAbilitySystemComponent.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -86,6 +87,15 @@ void AMyCharacter::RefreshHpBarRatio()
 		UMyHpBarWidget* HpBar = Cast<UMyHpBarWidget>(HpBarComponent->GetUserWidgetObject());
 		HpBar->SetHpRatio(Ratio);
 	}
+}
+
+UAbilitySystemComponent* AMyCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+void AMyCharacter::InitAbilitySystem()
+{
 }
 
 
