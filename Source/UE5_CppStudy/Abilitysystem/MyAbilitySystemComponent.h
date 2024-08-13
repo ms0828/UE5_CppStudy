@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayTagContainer.h"
 #include "MyAbilitySystemComponent.generated.h"
 
 /**
@@ -14,4 +15,10 @@ class UE5_CPPSTUDY_API UMyAbilitySystemComponent : public UAbilitySystemComponen
 {
 	GENERATED_BODY()
 	
+public:
+	void AddCharacterAbilities(const TArray<TSubclassOf<class UGameplayAbility>>& StartupAbilities);
+
+	TArray<FGameplayAbilitySpecHandle> SpecHandles;
+
+	void ActivateAbility(FGameplayTag AbilityTag);
 };

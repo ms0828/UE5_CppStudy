@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MyPlayerController.h"
 #include "MyPlayerState.h"
+#include "Attributes/MyPlayerSet.h"
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 
 AMyPlayer::AMyPlayer()
@@ -39,6 +40,17 @@ void AMyPlayer::BeginPlay()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 
+	if (TestEffect && AbilitySystemComponent)
+	{
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		// Handle
+		FGameplayEffectSpecHandle EffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(TestEffect, 1, EffectContext);
+
+		// Apply
+		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	}
 }
 
 void AMyPlayer::PossessedBy(AController* NewController)
@@ -54,6 +66,8 @@ void AMyPlayer::InitAbilitySystem()
 	{
 		AbilitySystemComponent = Cast<UMyAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
+
+		AttributeSet = PS->GetMyPlayerSet();
 	}
 }
 
@@ -74,4 +88,9 @@ void AMyPlayer::HandleGameplayEvent(FGameplayTag EventTag)
 void AMyPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("TETS!"));
+}
+
+void AMyPlayer::ActivateAbility(FGameplayTag AbilityTag)
+{
+	AbilitySystemComponent->ActivateAbility(AbilityTag);
 }

@@ -2,12 +2,14 @@
 
 
 #include "Character/MyMonster.h"
+#include "Attributes/MyMonsterSet.h"
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 
 AMyMonster::AMyMonster()
 {
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
 	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>("AbilitySystemComponent");
+	AttributeSet = CreateDefaultSubobject<UMyMonsterSet>("MonsterSet");
 	
 }
 

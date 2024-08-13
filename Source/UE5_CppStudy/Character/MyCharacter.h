@@ -50,15 +50,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	ECreatureState CreatureState = ECreatureState::Moving;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MaxHp = 100;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Hp = 100;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 FinalDamage = 10;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> HpBarComponent;
@@ -66,5 +57,14 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UMyAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UMyAttributeSet> AttributeSet;
+
+public:
+	void AddCharacterAbilities();
+
+	UPROPERTY(EditAnywhere, Category=Abilities)
+	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 
 };

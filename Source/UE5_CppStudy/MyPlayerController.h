@@ -64,4 +64,5 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAnimMontage> AttackMontage;
+
 };

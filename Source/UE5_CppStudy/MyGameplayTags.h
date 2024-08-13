@@ -14,4 +14,6 @@ namespace MyGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Begin);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_End);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Attack);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack);
 }

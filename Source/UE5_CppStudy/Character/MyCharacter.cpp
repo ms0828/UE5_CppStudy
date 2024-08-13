@@ -4,6 +4,7 @@
 #include "MyCharacter.h"
 #include "MyDefine.h"
 #include "Components/WidgetComponent.h"
+#include "Attributes/MyAttributeSet.h"
 #include "UI/MyHpBarWidget.h"
 #include "AbilitySystem/MyAbilitySystemComponent.h"
 // Sets default values
@@ -30,7 +31,7 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	RefreshHpBarRatio();
-	
+	AddCharacterAbilities();
 }
 
 // Called every frame
@@ -60,7 +61,10 @@ void AMyCharacter::UnHighlight()
 
 void AMyCharacter::OnDamage(int32 Damage, TObjectPtr<AMyCharacter> Attacker)
 {
+	float Hp = AttributeSet->GetHealth();
+	float MaxHp = AttributeSet->GetMaxHealth();
 	Hp = FMath::Clamp(Hp - Damage, 0, MaxHp);
+	AttributeSet->SetHealth(Hp);
 	if (Hp == 0)
 	{
 		OnDead(Attacker);
@@ -81,12 +85,15 @@ void AMyCharacter::OnDead(TObjectPtr<AMyCharacter> Attacker)
 
 void AMyCharacter::RefreshHpBarRatio()
 {
-	if (HpBarComponent)
+	if (HpBarComponent && AttributeSet)
 	{
+		float Hp = AttributeSet->GetHealth();
+		float MaxHp = AttributeSet->GetMaxHealth();
 		float Ratio = static_cast<float>(Hp) / MaxHp;
 		UMyHpBarWidget* HpBar = Cast<UMyHpBarWidget>(HpBarComponent->GetUserWidgetObject());
 		HpBar->SetHpRatio(Ratio);
 	}
+	
 }
 
 UAbilitySystemComponent* AMyCharacter::GetAbilitySystemComponent() const
@@ -96,6 +103,18 @@ UAbilitySystemComponent* AMyCharacter::GetAbilitySystemComponent() const
 
 void AMyCharacter::InitAbilitySystem()
 {
+
+}
+
+void AMyCharacter::AddCharacterAbilities()
+{
+	UMyAbilitySystemComponent* ASC = Cast<UMyAbilitySystemComponent>(AbilitySystemComponent);
+	if (ASC == nullptr)
+	{
+		return;
+	}
+
+	ASC->AddCharacterAbilities(StartupAbilities);
 }
 
 

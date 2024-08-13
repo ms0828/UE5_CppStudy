@@ -73,7 +73,7 @@ void AMyPlayerController::HandleGameplayEvent(FGameplayTag EventTag)
 	{
 		if (TargetActor)
 		{
-			TargetActor->OnDamage(MyPlayer->FinalDamage, MyPlayer);
+			TargetActor->OnDamage(10, MyPlayer);
 		}
 	}
 }
@@ -139,30 +139,25 @@ void AMyPlayerController::ChaseTargetAndAttack()
 		GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Cyan, TEXT("Attack"));
 		
 
-		if (AttackMontage)
+		if (bMousePressed)
 		{
-			if (bMousePressed)
-			{
-				//if (GetCharacter()->GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr) == false)
-				//TargetActor->OnDamage(MyPlayer->FinalDamage, MyPlayer);
+			//if (GetCharacter()->GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr) == false)
+			//TargetActor->OnDamage(MyPlayer->FinalDamage, MyPlayer);
 
-				FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(MyPlayer->GetActorLocation(), TargetActor->GetActorLocation());
-				MyPlayer->SetActorRotation(Rotator);
+			FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(MyPlayer->GetActorLocation(), TargetActor->GetActorLocation());
+			MyPlayer->SetActorRotation(Rotator);
 
-				GetCharacter()->PlayAnimMontage(AttackMontage);
-				SetCreatureState(ECreatureState::Skill);
+			//GetCharacter()->PlayAnimMontage(AttackMontage);
+			MyPlayer->ActivateAbility(MyGameplayTags::Ability_Attack);
 
-				TargetActor = HighlightActor;
-			}
-			else
-			{
-				TargetActor = nullptr;
-			}
+			SetCreatureState(ECreatureState::Skill);
 
+			TargetActor = HighlightActor;
 		}
-
-
-		
+		else
+		{
+			TargetActor = nullptr;
+		}
 	}
 	else
 	{
@@ -244,3 +239,4 @@ void AMyPlayerController::SetCreatureState(ECreatureState InState)
 		MyPlayer->CreatureState = InState;
 	}
 }
+
